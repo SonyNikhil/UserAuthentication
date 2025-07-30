@@ -32,6 +32,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/Notes/1.Basic Implementations.markdwon
+/src/main/resources/Notes/1.Basic Implementations.markdown
 /src/main/resources/Notes/
 /src/main/resources/application.properties
