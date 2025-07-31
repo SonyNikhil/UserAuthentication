@@ -3,9 +3,13 @@ package com.nikhil.userauthentication.controllers;
 import com.nikhil.userauthentication.dtos.*;
 import com.nikhil.userauthentication.models.Token;
 import com.nikhil.userauthentication.models.User;
+import com.nikhil.userauthentication.repos.TokenRepo;
+import com.nikhil.userauthentication.repos.UserRepo;
 import com.nikhil.userauthentication.services.AuthService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
 import java.util.function.LongFunction;
 
 @RestController
@@ -14,6 +18,9 @@ public class AuthController
 {
 
     AuthService authService;
+
+    @Autowired
+    UserRepo userRepo;
 
     public AuthController(AuthService authService){
         this.authService = authService;
@@ -43,6 +50,17 @@ public class AuthController
     @PostMapping("/logout")
     public boolean logout(@RequestBody LogOutRequestDto logOutRequestDto)
     {
+        return authService.logout(logOutRequestDto.getTokenValue());
+    }
+
+    @PostMapping("/logoutAllDevices")
+    public boolean logoutFromAllDevice(@RequestBody LogOutRequestDto logOutRequestDto)
+    {
+
+        if(authService.logoutFromAllDevice(logOutRequestDto.getEmail())){
+             return true;
+         }
+
         return false;
     }
 

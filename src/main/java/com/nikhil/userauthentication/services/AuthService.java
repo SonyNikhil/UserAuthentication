@@ -9,6 +9,7 @@ public interface AuthService
 {
     User signUp(String name, String email, String PhoneNumber, String password);
     Token login(String email, String password);
-    boolean logout(Token token);
+    boolean logout(String token);
     User validateToken(String tokenValue);
+    boolean logoutFromAllDevice(String email);
 }

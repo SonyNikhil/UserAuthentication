@@ -4,9 +4,11 @@ import com.nikhil.userauthentication.models.Token;
 import com.nikhil.userauthentication.models.User;
 import com.nikhil.userauthentication.repos.TokenRepo;
 import com.nikhil.userauthentication.repos.UserRepo;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -82,13 +84,40 @@ public class AuthServiceImpl implements AuthService
     }
 
     @Override
-    public boolean logout(Token token){
-        return false;
+    @Transactional
+    public boolean logout(String token){
+        Optional<Token> optionalToken = tokenRepo.findByTokenValue(token);
+
+        if(optionalToken.isEmpty()){
+            return false;
+        }
+
+        tokenRepo.deleteToken(token);
+
+        return true;
     }
 
     @Override
     public User validateToken(String tokenValue){
         return null;
+    }
+
+    @Transactional
+    @Override
+    public boolean logoutFromAllDevice(String email){
+        Optional<User> optionalUser = userRepo.findByEmail(email);
+
+        if(optionalUser.isEmpty()){
+            //throw exception
+
+            return false;
+        }
+
+        int id = optionalUser.get().getId();
+
+        tokenRepo.deleteAllToken(optionalUser.get().getId());
+
+        return true;
     }
 
 }

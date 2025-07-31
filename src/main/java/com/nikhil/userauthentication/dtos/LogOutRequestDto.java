@@ -8,4 +8,5 @@ import lombok.Setter;
 public class LogOutRequestDto
 {
     private String tokenValue;
+    private String email;
 }
