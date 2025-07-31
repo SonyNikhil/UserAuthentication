@@ -19,8 +19,6 @@ public class AuthController
 
     AuthService authService;
 
-    @Autowired
-    UserRepo userRepo;
 
     public AuthController(AuthService authService){
         this.authService = authService;

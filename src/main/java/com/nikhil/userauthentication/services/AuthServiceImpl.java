@@ -6,6 +6,7 @@ import com.nikhil.userauthentication.repos.TokenRepo;
 import com.nikhil.userauthentication.repos.UserRepo;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -20,11 +21,13 @@ public class AuthServiceImpl implements AuthService
 
     private final UserRepo userRepo;
     private final TokenRepo tokenRepo;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
-    public AuthServiceImpl(UserRepo userRepo, TokenRepo tokenRepo){
+    public AuthServiceImpl(UserRepo userRepo, TokenRepo tokenRepo, BCryptPasswordEncoder bCryptPasswordEncoder){
         this.userRepo = userRepo;
         this.tokenRepo = tokenRepo;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
@@ -42,8 +45,9 @@ public class AuthServiceImpl implements AuthService
         newUser.setName(name);
         newUser.setEmail(email);
         newUser.setPhoneNumber(phoneNumber);
-        newUser.setPassword(password);
+//        newUser.setPassword(password);
 
+        newUser.setPassword(bCryptPasswordEncoder.encode(password));
         return userRepo.save(newUser);
     }
 
@@ -56,9 +60,18 @@ public class AuthServiceImpl implements AuthService
             return null;
         }
 
-        if (!user.get().getPassword().equals(password)) {
-            //throw exception
 
+        //Without BCrypt method
+//        if (!user.get().getPassword().equals(password)) {
+//            //throw exception
+//
+//            return null;
+//        }
+
+        //With BCrypt
+
+        if(!bCryptPasswordEncoder.matches(password, user.get().getPassword())){
+            //throw exception
             return null;
         }
 
