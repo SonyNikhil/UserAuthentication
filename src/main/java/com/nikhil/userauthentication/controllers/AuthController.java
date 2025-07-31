@@ -1,9 +1,12 @@
 package com.nikhil.userauthentication.controllers;
 
 import com.nikhil.userauthentication.dtos.*;
+import com.nikhil.userauthentication.models.Token;
 import com.nikhil.userauthentication.models.User;
 import com.nikhil.userauthentication.services.AuthService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.function.LongFunction;
 
 @RestController
 @RequestMapping("/auth")
@@ -27,7 +30,14 @@ public class AuthController
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto)
     {
-        return null;
+        Token token = authService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+
+        loginResponseDto.setTokenValue(token.getTokenValue());
+
+        return loginResponseDto;
+
     }
 
     @PostMapping("/logout")
