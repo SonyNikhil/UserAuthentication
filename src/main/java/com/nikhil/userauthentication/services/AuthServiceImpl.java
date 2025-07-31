@@ -112,7 +112,25 @@ public class AuthServiceImpl implements AuthService
 
     @Override
     public User validateToken(String tokenValue){
-        return null;
+
+        /**
+         * Things that need to be checked for token validation -
+         * 1. Exists in DB.
+         * 2. Not Deleted.
+         * 3. Not expired.
+         */
+
+        Optional<Token> optionalToken =
+                tokenRepo.findByTokenValueAndIsDeletedAndExpiryAtGreaterThan (tokenValue, false,new Date());
+
+        if(optionalToken.isEmpty()){
+            // throw exceptoin
+
+            return null;
+        }
+
+        Token token = optionalToken.get();
+        return token.getUser();
     }
 
     @Transactional

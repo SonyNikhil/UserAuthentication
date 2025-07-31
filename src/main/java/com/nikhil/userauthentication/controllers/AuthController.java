@@ -7,6 +7,9 @@ import com.nikhil.userauthentication.repos.TokenRepo;
 import com.nikhil.userauthentication.repos.UserRepo;
 import com.nikhil.userauthentication.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -62,5 +65,20 @@ public class AuthController
         return false;
     }
 
-    public void validateToken(){}
+    @GetMapping("/validate/{token}")
+    public ResponseEntity<Boolean> validateToken(@PathVariable(name = "token") String token)
+    {
+        User user = authService.validateToken(token);
+
+        ResponseEntity<Boolean> responseEntity;
+
+        if(user == null)
+        {
+            responseEntity = new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        }
+
+        responseEntity = new ResponseEntity<>(true, HttpStatus.FOUND);
+
+        return responseEntity;
+    }
 }

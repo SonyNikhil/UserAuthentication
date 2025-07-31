@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.swing.text.html.Option;
+import java.util.Date;
 import java.util.Optional;
 
 @Repository
@@ -26,4 +27,7 @@ public interface TokenRepo extends JpaRepository<Token, Integer>
     @Modifying
     @Query("update Token t set t.isDeleted = true where t.user.id = :userId")
     void deleteAllToken(@Param("userId") int id);
+
+    Optional<Token> findByTokenValueAndIsDeletedAndExpiryAtGreaterThan(String tokenValue,
+                                                                     boolean isDeleted, Date expiryAt);
 }
