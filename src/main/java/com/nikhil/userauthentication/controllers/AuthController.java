@@ -75,6 +75,7 @@ public class AuthController
         if(user == null)
         {
             responseEntity = new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+            return responseEntity;
         }
 
         responseEntity = new ResponseEntity<>(true, HttpStatus.FOUND);
