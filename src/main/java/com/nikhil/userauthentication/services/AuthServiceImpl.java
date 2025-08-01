@@ -11,6 +11,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,9 +27,11 @@ public class AuthServiceImpl implements AuthService
 
     // Dummy Secret Key for testing purpose
 
-    private static final String SECRET_KEY_STRING = "just-a-dummy-secret-key-for-testing-purpose.";
+    //Pasted it in JWT configs
 
-    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes(StandardCharsets.UTF_8));
+//    private static final String SECRET_KEY_STRING = "just-a-dummy-secret-key-for-testing-purpose.";
+//
+//    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes(StandardCharsets.UTF_8));
 
     // Industry practised best secret key. for actual working.
 //    private static final SecretKey SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
@@ -37,6 +40,10 @@ public class AuthServiceImpl implements AuthService
     private final UserRepo userRepo;
     private final TokenRepo tokenRepo;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+
+    @Autowired
+    private SecretKey secretKey;
 
 
     public AuthServiceImpl(UserRepo userRepo, TokenRepo tokenRepo, BCryptPasswordEncoder bCryptPasswordEncoder){
@@ -108,7 +115,8 @@ public class AuthServiceImpl implements AuthService
                 .setSubject(user.getEmail())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+//                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
 
 
@@ -170,7 +178,7 @@ public class AuthServiceImpl implements AuthService
 
        try{
            claims = Jwts.parser()
-                   .setSigningKey(SECRET_KEY)
+                   .setSigningKey(secretKey)
                    .build()
                    .parseClaimsJws(tokenValue)
                    .getBody();
